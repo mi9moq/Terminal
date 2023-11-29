@@ -1,15 +1,13 @@
 package com.example.terminal
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.terminal.presentation.TerminalUiState
+import com.example.terminal.presentation.TerminalViewModel
 import com.example.terminal.ui.theme.TerminalTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,30 +15,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TerminalTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
+                val viewModel: TerminalViewModel = viewModel()
+                val state = viewModel.state.collectAsState()
+
+                when (val currentState = state.value) {
+                    is TerminalUiState.Initial -> Unit
+                    is TerminalUiState.Content -> {
+                        Log.d("MainActivity", currentState.barList.toString())
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TerminalTheme {
-        Greeting("Android")
     }
 }
